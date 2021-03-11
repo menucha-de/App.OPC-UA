@@ -1,0 +1,96 @@
+#!/bin/sh
+
+. /etc/profile
+
+APP=$(realpath $0)
+
+NAME=havis.opc-ua
+DEB_NAME=havis.net.aim
+DEPS="havis.opc-ua havis.opc-ua.models"
+INFO=/opt/havis-apps/info
+EXIT=0
+
+do_install()
+{
+  TMP=$(mktemp -d)
+  cd $TMP
+  sed '1,/^#EOF#$/d' "$APP" | tar x
+  do_install_deps
+  if dpkg -i $DEB_NAME\.deb; then
+    sed '/^#EOF#$/,$d' "$APP" > $INFO/$NAME.app
+  else
+    do_remove_deps
+    EXIT=$?
+  fi
+  cd -
+  rm -r $TMP
+}
+
+do_install_deps()
+{
+  for dep in $DEPS; do
+    case "$(dpkg -l $dep | grep "^ii" | awk '/^ii/{print $3}')" in
+      2.4.*)
+        ;;
+      *)
+        dpkg -i $dep\.deb
+        ;;
+    esac
+  done
+}
+
+do_extract()
+{
+  TMP=$(mktemp -d)
+  cd $TMP
+  sed '1,/^#EOF#$/d' "$APP" | tar x
+  for dep in $DEPS; do
+    dpkg -x $dep\.deb $TARGET
+  done
+  dpkg -x $DEB_NAME\.deb $TARGET
+  cd -
+  rm -r $TMP
+}
+
+do_remove()
+{
+  if dpkg -r $DEB_NAME; then
+    rm $INFO/$NAME.app
+  else
+    EXIT=$?
+  fi
+  do_remove_deps
+}
+
+do_remove_deps()
+{
+  for dep in $(echo $DEPS | awk '{ for (i=NF; i>1; i--) printf("%s ",$i); print $1; }'); do
+    dpkg -r $dep
+  done
+}
+
+case "$1" in
+  name)
+    echo $NAME.app
+    ;;
+  install)
+    echo "Installing $NAME"
+    do_install
+    ;;
+  remove)
+    echo "Removing $NAME"
+    do_remove
+    ;;
+  extract)
+    echo "Extracting $NAME"
+    do_extract
+    ;;
+  *)
+    echo "Usage: $NAME {install|remove}"
+    exit 1
+    ;;
+esac
+
+exit $EXIT
+
+#EOF#

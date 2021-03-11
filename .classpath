@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src/main/java"/>
+	<classpathentry kind="src" path="src/main/resources/classpath"/>
+	<classpathentry kind="src" output="target/test/classes" path="src/test/java"/>
+	<classpathentry kind="src" output="target/test/classes" path="src/test/resources/classpath"/>
+	<classpathentry kind="con" path="com.google.gwt.eclipse.core.GWT_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.apache.ivyde.eclipse.cpcontainer.IVYDE_CONTAINER/?project=AIM&amp;ivyXmlPath=ivy.xml&amp;confs=*&amp;ivySettingsPath=ivysettings.xml&amp;loadSettingsOnDemand=false&amp;ivyUserDir=&amp;propertyFiles="/>
+	<classpathentry kind="lib" path="target/jaxb/classes" sourcepath="target/jaxb/src"/>
+	<classpathentry kind="lib" path="lib/ant-1.9.9.jar"/>
+	<classpathentry kind="lib" path="lib/asm-5.0.4.jar"/>
+	<classpathentry kind="lib" path="lib/colt-1.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/gmbal-api-only-3.2.0-b003.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-d3-api-1.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-d3-api-sources-1.2.0.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-d3-js-3.5.14.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-d3-js-sources-3.5.14.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-dev-2.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-elemental-2.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/gwt-user-2.7.0.jar"/>
+	<classpathentry kind="lib" path="lib/hamcrest-core-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/havis.device.io-api-2.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/havis.device.rf-api-2.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/havis.device.rf-common-2.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/havis.net.rest.shared-2.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/havis.net.ui.shared-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/havis.opcua.message-api-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/havis.opcua.message-common-2.3.0.jar"/>
+	<classpathentry kind="lib" path="lib/havis.tools.jaxb-2.4.0.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-annotations-2.4.6.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-core-2.4.6.jar"/>
+	<classpathentry kind="lib" path="lib/jackson-databind-2.4.6.jar"/>
+	<classpathentry kind="lib" path="lib/javax.annotation-api-1.2.jar"/>
+	<classpathentry kind="lib" path="lib/javax.ws.rs-api-2.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb-core-2.2.10.jar"/>
+	<classpathentry kind="lib" path="lib/jaxb-xjc-2.2.10.jar"/>
+	<classpathentry kind="lib" path="lib/jaxws-rt-2.2.10.jar"/>
+	<classpathentry kind="lib" path="lib/jaxws-tools-2.2.10.jar"/>
+	<classpathentry kind="lib" path="lib/jmockit-1.20.jar"/>
+	<classpathentry kind="lib" path="lib/jmockit-coverage-1.20.jar"/>
+	<classpathentry kind="lib" path="lib/jsinterop-annotations-1.0.1.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="lib/org.osgi.core-6.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/org.osgi.util.tracker-1.5.1.jar"/>
+	<classpathentry kind="lib" path="lib/restygwt-2.1.1.jar"/>
+	<classpathentry kind="lib" path="lib/sac-1.3.jar"/>
+	<classpathentry kind="lib" path="lib/stax-ex-1.7.7.jar"/>
+	<classpathentry kind="lib" path="lib/streambuffer-1.5.3.jar"/>
+	<classpathentry kind="lib" path="lib/tapestry-4.0.2.jar"/>
+	<classpathentry kind="lib" path="lib/validation-api-1.0.0.GA.jar"/>
+	<classpathentry kind="lib" path="lib/validation-api-sources-1.0.0.GA.jar"/>
+	<classpathentry kind="output" path="target/classes"/>
+</classpath>

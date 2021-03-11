@@ -1,0 +1,48 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:s="urn:import:havis.net.ui.shared.client" xmlns:shr="urn:import:havis.net.ui.shared.client.widgets">
+	
+	<ui:with type="havis.net.ui.shared.resourcebundle.ResourceBundle" field="res" />
+	<ui:with type="havis.net.aim.ui.resourcebundle.ConstantsResource" field="i18n" />
+	
+	<ui:style>
+	.serverHeader {
+		display: flex;
+	}
+	
+	.exportPanel {
+		display: flex;
+		align-items: center;
+		border-right: 1px solid lightgrey;
+		border-left: 1px solid lightgrey;
+	}
+	
+	.exportLabel {
+		font-weight: bold;
+		margin-right: 0.4em;
+		margin-left: 1em;
+	}
+	
+	.exportButton {
+		border: 0;
+		margin-right: 2em;
+	}
+	
+	.enableButton {
+		margin-right: 0.5em;
+		margin-left: 1em;
+	}
+	</ui:style>
+	
+	<g:HTMLPanel>
+		<s:SectionHeader addStyleNames="{style.serverHeader}">
+			<g:FlowPanel styleName="{style.exportPanel}">
+				<g:Label ui:text="{i18n.export}" addStyleNames="{style.exportLabel}" />
+				<g:Button ui:field="export" addStyleNames="{res.css.export} {style.exportButton}" />
+			</g:FlowPanel>
+			<g:ToggleButton ui:field="enable" stylePrimaryName="webui-EnableButton" addStyleNames="{style.enableButton}"/>			
+		</s:SectionHeader>
+		<shr:CustomMessageWidget ui:field="message" />
+	</g:HTMLPanel>
+</ui:UiBinder> 

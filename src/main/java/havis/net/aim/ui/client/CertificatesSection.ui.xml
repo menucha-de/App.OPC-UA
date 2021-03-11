@@ -1,0 +1,35 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:u="urn:import:havis.net.ui.shared.client.upload">
+	
+	<ui:with type="havis.net.ui.shared.resourcebundle.ResourceBundle" field="res" />
+	<ui:with type="havis.net.ui.shared.resourcebundle.ConstantsResource" field="i18n" />
+	
+	<ui:style>	
+	.specItemListSeperator {
+		border-top: 1px solid lightgrey;
+	}
+	
+	.setMargin {
+		margin-bottom: 1em;
+	}
+	</ui:style>
+	
+	<g:HTMLPanel addStyleNames="{res.css.specItemList}">
+		<g:FlowPanel ui:field="certificatesList" addStyleNames="{style.specItemListSeperator}" />
+		<g:FlowPanel addStyleNames="{res.css.item} {style.setMargin}">
+			<g:FocusPanel ui:field="focus">
+				<g:FlowPanel addStyleNames="{res.css.toolbar}">
+					<g:FlowPanel addStyleNames="{res.css.specItemNameRow}">
+						<g:Label ui:field="refreshButton" addStyleNames="{res.css.refreshButton}" ui:text="&nbsp;" />
+						<g:Label ui:field="addButton" addStyleNames="{res.css.addButton}" ui:text="&nbsp;" />
+					</g:FlowPanel>
+					<g:Label ui:field="importButton" addStyleNames="{res.css.importButton} {res.css.closed}" ui:text="{i18n.importStr}" />
+					<g:ToggleButton ui:field="extend" stylePrimaryName="webui-ExtendButton" />
+				</g:FlowPanel>				
+			</g:FocusPanel>
+		</g:FlowPanel>
+		<u:MultipleFileUpload ui:field="upload" visible="false" />
+	</g:HTMLPanel>
+</ui:UiBinder> 

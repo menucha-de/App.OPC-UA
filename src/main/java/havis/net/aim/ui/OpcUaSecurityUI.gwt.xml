@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE module PUBLIC "-//Google Inc.//DTD Google Web Toolkit 2.7.0//EN" "http://gwtproject.org/doctype/2.7.0/gwt-module.dtd">
+<module rename-to="havis.net.aim.OpcUaSecurity">
+	<inherits name="com.google.gwt.user.User" />
+	<inherits name="havis.net.aim.rest.OpcUaSecurityService" />
+	<inherits name="havis.net.aim.OpcUaConfiguration" />
+	<inherits name="elemental.Elemental" />
+	<inherits name="org.fusesource.restygwt.RestyGWT" />
+	
+	<inherits name="havis.net.ui.shared.Shared" />
+	<inherits name="havis.net.rest.shared.Shared" />
+	<inherits name="havis.net.ui.core.theme.macio.Macio" />
+	<inherits name="com.google.gwt.logging.Logging"/>
+	
+	<source path="resourcebundle" />
+	<source path="client" />
+	
+	<entry-point class="havis.net.aim.ui.client.OpcUaSecurityUI" />
+</module>

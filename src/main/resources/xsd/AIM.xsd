@@ -1,0 +1,487 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<xs:schema xmlns="urn:havis:net:aim:xsd:1" xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="urn:havis:net:aim:xsd:1" elementFormDefault="qualified">
+	<xs:complexType name="DeviceType" abstract="true">
+		<xs:sequence>			
+			<xs:element name="deviceManual" type="xs:string" />
+			<xs:element name="deviceRevision" type="xs:string" />
+			<xs:element name="hardwareRevision" type="xs:string" />
+			<xs:element name="manufacturer" type="xs:string" />
+			<xs:element name="model" type="xs:string" />
+			<xs:element name="revisionCounter" type="xs:int" />
+			<xs:element name="serialNumber" type="xs:string" />
+			<xs:element name="softwareRevision" type="xs:string" />						
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="AutoIdDeviceType" abstract="true">
+		<xs:complexContent>
+			<xs:extension base="DeviceType">
+				<xs:sequence>
+					<xs:element name="autoIdModelVersion" type="xs:string" />
+					<xs:element name="deviceInfo" type="xs:string" />
+					<xs:element name="deviceName" type="xs:string" />
+					<xs:element name="deviceStatus" type="DeviceStatusEnumeration" />										
+					<xs:element name="codeTypes" type="CodeTypesType"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="RfidReaderDeviceType" abstract="true">
+		<xs:complexContent>
+			<xs:extension base="AutoIdDeviceType">
+				<xs:sequence>
+					<xs:element name="antennaNames" type="AntennaNameIdPair" maxOccurs="unbounded" />
+					<xs:element name="lastScanData" type="ScanData" />
+					<xs:element name="tagTypes" type="TagTypesType"></xs:element>
+				</xs:sequence>
+			</xs:extension>
+			
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="ScanSettings">
+		<xs:sequence>
+			<xs:element name="duration" type="xs:double">
+				<xs:annotation>
+					<xs:documentation>
+						Duration of the scan operation in milliseconds. Duration is one of the
+						termination conditions for the scan operation. The value 0 is infinite.
+						The termination conditions are related to each other. If one of the
+						conditions is fulfilled, the scan operation is stopped.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="cycles" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>
+						Duration of the scan operation in 'number of scan cycles'. The
+						parameter Cycles is one of the termination conditions for the scan
+						operation. The value 0 is infinite.
+						The termination conditions are related to each other. If one of the
+						conditions is fulfilled, the scan operation is stopped.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="dataAvailable" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>
+						If this value is set to True, the scan operation is completed as soon as
+						scan data is available. If this value is set to False, only the other 
+						termination conditions are used.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<!-- Optional
+				<xs:element name="locationType" />					
+			 -->
+			 					
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="ScanResult" abstract="true">
+		<xs:sequence>
+			<xs:element name="codeType" type="CodeTypeEnumeration"></xs:element>
+			<xs:element name="scanData" type="ScanData"></xs:element>
+			<xs:element name="timeStamp" type="xs:long"></xs:element>
+			
+			<!-- Optional 
+				<xs:element name="location" />
+			 -->
+			 
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="RfidScanResult">
+		<xs:complexContent>
+			<xs:extension base="ScanResult">
+				<xs:sequence>
+					<xs:element name="sightings" type="RfidSighting" maxOccurs="unbounded">
+						<xs:annotation>
+							<xs:documentation>
+								Returns additional information on the RFID-related properties
+								of the scan event as array of RfidSightings.
+								Each AutoID Identifier can be detected several times during a
+								scan cycle. Each detection of the AutoID Identifier causes an
+								entry into the Sigthings array.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:element>		
+				</xs:sequence>
+			</xs:extension>
+		</xs:complexContent>
+	</xs:complexType>
+	
+	<xs:complexType name="RfidSighting">
+		<xs:sequence>
+			<xs:element name="antennaId" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>
+						Returns the number of the antenna which detects the RFID tag first.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="strength" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>
+						Returns the signal strength (RSSI) of the transponder. Higher values
+						indicate a better strength.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="timestamp" type="xs:long">
+				<xs:annotation>
+					<xs:documentation>
+						Time stamp in UtcTime.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			
+			<xs:element name="currentPowerLevel" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>
+						Returns the current power level (unit according to parameter settings)
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
+	
+	
+	<xs:complexType name="ScanData">
+		<xs:sequence>
+			<xs:element name="byteString" type="xs:hexBinary" />
+			<xs:element name="string" type="xs:string" />
+			<xs:element name="epc" type="ScanDataEpc" />					
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="ScanDataEpc">
+		<xs:sequence>
+			<xs:element name="pc" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>
+						Protocol control information according to ISO/IEC 18000-3 Mode 3,
+						ISO/IEC 18000-63 and GS1 EPCglobal
+					</xs:documentation>
+				</xs:annotation>				
+			</xs:element>
+			<xs:element name="uid" type="xs:hexBinary">
+				<xs:annotation>
+					<xs:documentation>
+						AutoID Identifier according to ISO/IEC 18000-3 Mode 3, ISO/IEC
+						18000-63 and GS1 EPCglobal
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>						
+			
+			<!--Optional 
+			<xs:element name="xpc_w1" type="xs:int" />
+			<xs:element name="xpc_w2" type="xs:int" />
+			 -->
+						
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="AntennaNameIdPair">
+		<xs:sequence>
+			<xs:element name="antennaId" type="xs:int">
+				<xs:annotation>
+					<xs:documentation>
+						ID of the antenna returned in the RfidSigthing contained in the
+						RfidScanResult.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+			<xs:element name="antennaName" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>
+						Name of the antenna with the AntennaId.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>			
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="RfidScanResultPair">
+		<xs:sequence>
+			<xs:element name="results" type="RfidScanResult" maxOccurs="unbounded" />
+			<xs:element name="status" type="AutoIdOperationStatusEnumeration" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:complexType name="ReadResultPair">
+		<xs:sequence>
+			<xs:element name="resultData" type="xs:hexBinary" />
+			<xs:element name="status" type="AutoIdOperationStatusEnumeration" />
+		</xs:sequence>
+	</xs:complexType>
+	
+	<xs:simpleType name="DeviceStatusEnumeration">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="Idle"></xs:enumeration>
+			<xs:enumeration value="Error"></xs:enumeration>
+			<xs:enumeration value="Scanning"></xs:enumeration>
+			<xs:enumeration value="Busy"></xs:enumeration>
+		</xs:restriction>		
+	</xs:simpleType>
+	
+	<xs:simpleType name="AutoIdOperationStatusEnumeration">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="SUCCESS">
+				<xs:annotation>
+					<xs:documentation>Successful operation</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="MISC_ERROR_TOTAL">
+				<xs:annotation>
+					<xs:documentation>The operation has not be executed in total
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="MISC_ERROR_PARTIAL">
+				<xs:annotation>
+					<xs:documentation>The operation has been executed only partial
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PERMISSON_ERROR">
+				<xs:annotation>
+					<xs:documentation>Password required</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PASSWORD_ERROR">
+				<xs:annotation>
+					<xs:documentation>Password is wrong</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="REGION_NOT_FOUND_ERROR">
+				<xs:annotation>
+					<xs:documentation>Memory region not available for the actual tag
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="OP_NOT_POSSIBLE_ERROR">
+				<xs:annotation>
+					<xs:documentation>Operation not supported by the actual tag
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="OUT_OF_RANGE_ERROR">
+				<xs:annotation>
+					<xs:documentation>Addressed memory not available for the actual tag
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="NO_IDENTIFIER">
+				<xs:annotation>
+					<xs:documentation>The operation cannot be executed because no tag or
+						code was inside the range of the AutoID Device or the tag or code
+						has been moved out of the range during execution</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="MULTIPLE_IDENTIFIERS">
+				<xs:annotation>
+					<xs:documentation>Multiple tags or codes have been selected, but the
+						command can only be used with a single tag or code
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="READ_ERROR">
+				<xs:annotation>
+					<xs:documentation>The tag or code exists and has a valid format, but
+						there was a problem reading the data (e.g. still CRC error after
+						maximum number of retries)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="DECODING_ERROR">
+				<xs:annotation>
+					<xs:documentation>The (optical) code or plain text has too many
+						failures and cannot be detected</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="MATCH_ERROR">
+				<xs:annotation>
+					<xs:documentation>The code doesn’t match the given target value
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="CODE_NOT_SUPPORTED">
+				<xs:annotation>
+					<xs:documentation>The code format is not supported by the AutoID
+						Device</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="WRITE_ERROR">
+				<xs:annotation>
+					<xs:documentation>The tag exists, but there was a problem writing
+						the data</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="NOT_SUPPORTED_BY_DEVICE">
+				<xs:annotation>
+					<xs:documentation>The command or a parameter combination is not
+						supported by the AutoID Device</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="NOT_SUPPORTED_BY_TAG">
+				<xs:annotation>
+					<xs:documentation>The command or a parameter combination is not
+						supported by the tag</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="DEVICE_NOT_READY">
+				<xs:annotation>
+					<xs:documentation>The AutoID Device is in a state not ready to
+						execute the command</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="INVALID_CONFIGURATION">
+				<xs:annotation>
+					<xs:documentation>The AutoID Device configuration is not valid
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="RF_COMMUNICATION_ERROR">
+				<xs:annotation>
+					<xs:documentation>This error indicates that there is a general error
+						in the communication between the transponder and the reader
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="DEVICE_FAULT">
+				<xs:annotation>
+					<xs:documentation>The AutoID Device has a hardware fault
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TAG_HAS_LOW_BATTERY">
+				<xs:annotation>
+					<xs:documentation>The battery of the (active) tag is low
+					</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="RfidLockRegionEnumeration">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="KILL">
+				<xs:annotation>
+					<xs:documentation>The kill password</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="ACCESS">
+				<xs:annotation>
+					<xs:documentation>The access password</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="EPC">			
+				<xs:annotation>
+					<xs:documentation>The UII/EPC bank (bank 01)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="TID">
+				<xs:annotation>
+					<xs:documentation>The TID bank (bank 10)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="USER">
+				<xs:annotation>
+					<xs:documentation>The user memory bank (bank 11)</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="RfidLockOperationEnumeration">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="LOCK">
+				<xs:annotation>
+					<xs:documentation>Locks the memory area</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="UNLOCK">
+				<xs:annotation>
+					<xs:documentation>Unlocks the memory area</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PERMANENTLOCK">			
+				<xs:annotation>
+					<xs:documentation>Locks the memory area irreversible</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="PERMANENTUNLOCK">
+				<xs:annotation>
+					<xs:documentation>Unlocks the memory area irreversible</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>			
+		</xs:restriction>
+	</xs:simpleType>
+	
+	<xs:simpleType name="RfidPasswordTypeEnumeration">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="ACCESS">
+				<xs:annotation>
+					<xs:documentation>Access password</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="KILL">
+				<xs:annotation>
+					<xs:documentation>Kill password</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="READ">
+				<xs:annotation>
+					<xs:documentation>Read password</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+			<xs:enumeration value="WRITE">
+				<xs:annotation>
+					<xs:documentation>Write password</xs:documentation>
+				</xs:annotation>
+			</xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
+	
+	 <xs:simpleType name="TagSet">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="CURRENT"/>
+            <xs:enumeration value="ADDITIONS"/>
+            <xs:enumeration value="DELETIONS"/>            
+        </xs:restriction>
+    </xs:simpleType>
+	
+    <xs:complexType name="Configuration">
+    	<xs:sequence>
+			<xs:element minOccurs="1" maxOccurs="1" type="TagSet" name="tagSet"/>
+		</xs:sequence>      
+    </xs:complexType>
+
+    <xs:complexType name="CodeTypesType">
+    	<xs:sequence>
+    		<xs:element name="codeType" type="CodeTypeEnumeration" maxOccurs="unbounded" minOccurs="1"></xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+        
+    <xs:simpleType name="CodeTypeEnumeration">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="EPC"></xs:enumeration>			
+		</xs:restriction>		
+	</xs:simpleType>    
+
+    <xs:complexType name="TagTypesType">
+    	<xs:sequence>
+    		<xs:element name="tagType" type="TagTypeEnumeration" maxOccurs="unbounded" minOccurs="1"></xs:element>
+    	</xs:sequence>
+    </xs:complexType>
+    
+    <xs:simpleType name="TagTypeEnumeration">
+		<xs:restriction base="xs:string">
+			<xs:enumeration value="EPC Class1 Gen2 V1"></xs:enumeration>
+		</xs:restriction>		
+	</xs:simpleType>	
+</xs:schema>

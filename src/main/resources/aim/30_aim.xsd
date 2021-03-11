@@ -1,0 +1,30 @@
+<xs:schema elementFormDefault="qualified" targetNamespace="http://harting.com/AIM/Types.xsd" xmlns:tns="http://harting.com/AIM/Types.xsd" xmlns:ua="http://opcfoundation.org/UA/2008/02/Types.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+    <xs:import namespace="http://opcfoundation.org/UA/2008/02/Types.xsd"/>
+    <xs:simpleType name="HaIODirectionEnumeration">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="OUTPUT_0"/>
+            <xs:enumeration value="INPUT_1"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element type="tns:HaIODirectionEnumeration" name="HaIODirectionEnumeration"/>
+    <xs:complexType name="ListOfHaIODirectionEnumeration">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" type="tns:HaIODirectionEnumeration" name="HaIODirectionEnumeration" nillable="true"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element type="tns:ListOfHaIODirectionEnumeration" name="ListOfHaIODirectionEnumeration" nillable="true"/>
+    <xs:simpleType name="HaIOStateEnumeration">
+        <xs:restriction base="xs:string">
+            <xs:enumeration value="LOW_0"/>
+            <xs:enumeration value="HIGH_1"/>
+            <xs:enumeration value="UNKNOWN_2"/>
+        </xs:restriction>
+    </xs:simpleType>
+    <xs:element type="tns:HaIOStateEnumeration" name="HaIOStateEnumeration"/>
+    <xs:complexType name="ListOfHaIOStateEnumeration">
+        <xs:sequence>
+            <xs:element minOccurs="0" maxOccurs="unbounded" type="tns:HaIOStateEnumeration" name="HaIOStateEnumeration" nillable="true"/>
+        </xs:sequence>
+    </xs:complexType>
+    <xs:element type="tns:ListOfHaIOStateEnumeration" name="ListOfHaIOStateEnumeration" nillable="true"/>
+</xs:schema>

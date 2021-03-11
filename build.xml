@@ -1,0 +1,317 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<project name="havis.net.aim" default="publish" xmlns:ivy="antlib:org.apache.ivy.ant" xmlns:if="ant:if" xmlns:unless="ant:unless">
+
+	<property file="${basedir}/build.properties" />
+	<property name="basename" value="${ant.project.name}" />
+	<property name="build.dir" location="${basedir}/target" />
+	<property name="build.dir.classes" location="${build.dir}/classes" />
+	<property name="build.dir.test" location="${build.dir}/test" />
+	<property name="build.dir.test.classes" location="${build.dir.test}/classes" />
+	<property name="build.dir.jaxb" value="${build.dir}/jaxb" />
+	<property name="build.dir.jaxb.classes" value="${build.dir.jaxb}/classes" />
+	<property name="build.dir.jaxb.src" value="${build.dir.jaxb}/src" />
+	<property name="doc.dir" location="${build.dir}/doc" />
+	<property name="lib.dir" location="${basedir}/lib" />
+	<property name="resources.dir" location="${basedir}/src/main/resources" />
+	<property name="resources.dir.xsd" location="${resources.dir}/xsd" />
+	<property name="resources.dir.classpath" location="${resources.dir}/classpath" />
+	<property name="src.main.dir" location="${basedir}/src/main/java" />
+	<property name="src.test.dir" location="${basedir}/src/test/java" />
+	<property name="dst.dir" location="${build.dir}/deb/opt/havis-apps" />
+
+	<property name="resources.dir.test" location="${basedir}/src/test/resources" />
+	<property name="resources.dir.test.classpath" location="${resources.dir.test}/classpath" />
+
+	<property file="${resources.dir}/build.properties" />
+	<property file="${resources.dir}/MANIFEST.MF" prefix="manifest" />
+
+	<property name="jmockit.coverage.exclude" value="havis\.device\.rf\.nur\.test\..*" />
+	<property name="jmockit.coverage.outputDir" location="${build.dir.test}/coverage-report" />
+
+	<path id="build.classpath">
+		<fileset dir="${lib.dir}" />
+	</path>
+
+	<filterset id="manifest" filtersfile="${resources.dir}/MANIFEST.MF" />
+
+	<!-- Checks if the build properties are set prints an error message otherwise -->
+	<target name="check.build.properties">
+		<condition property="ivy.resolver" else="local">
+			<isset property="ivy.resolver" />
+		</condition>
+		<condition property="skip.test" else="false">
+			<isset property="skip.test" />
+		</condition>
+		<fail message="Missing property 'api.url'. Does 'build.properties' file exists?" unless="api.url" />
+		<fail message="Missing property 'ivy.url'. Does 'build.properties' file exists?" unless="ivy.url" />
+
+		<condition property="osname" value="linux">
+			<matches pattern="^linux-.*" string="${platform}" />
+		</condition>
+		<condition property="arch" value="amd64">
+			<matches pattern="^linux-amd64$" string="${platform}" />
+		</condition>
+		<condition property="arch" value="armhf">
+			<matches pattern="^linux-arm$" string="${platform}" />
+		</condition>
+		<condition property="processor" value="amd64">
+			<matches pattern=".*-amd64$" string="${platform}" />
+		</condition>
+		<condition property="processor" value="arm">
+			<matches pattern=".*-arm$" string="${platform}" />
+		</condition>
+		<condition property="processor" value="x86">
+			<matches pattern=".*-x86$" string="${platform}" />
+		</condition>
+		<condition property="processor" value="x86-64">
+			<matches pattern=".*-x86_64$" string="${platform}" />
+		</condition>
+		<echo message="Building for ${processor} processor" if:set="processor" />
+
+		<condition property="arm" value="true">
+			<matches pattern="arm" string="${processor}" />
+		</condition>
+	</target>
+
+	<target name="clean-cache" description="Cleans the ivy cache">
+		<ivy:cleancache />
+	</target>
+
+	<target name="clean" description="Cleans the project">
+		<delete dir="${build.dir}" />
+		<delete dir="${lib.dir}" />
+	</target>
+
+	<target name="clean-all" depends="clean, clean-cache" description="Cleans the project" />
+
+	<target name="retrieve" depends="check.build.properties">
+		<ivy:retrieve conf="default" log="quiet" />
+	</target>
+
+	<macrodef name="xjc">
+		<attribute name="name" />
+		<attribute name="package" />
+		<attribute name="catalog" default="" />
+		<element name="bindings" optional="true" implicit="true" />
+		<sequential>
+			<mkdir dir="${build.dir.jaxb.src}" />
+			<taskdef name="xjc2" classname="com.sun.tools.xjc.XJC2Task" classpathref="build.classpath" />
+			<xjc2 schema="${resources.dir.xsd}/@{name}.xsd" destdir="${build.dir.jaxb.src}" package="@{package}" extension="true">
+				<arg value="-npa" />
+				<arg value="-Xclone" />
+				<arg value="-verbose" />
+				<bindings />
+			</xjc2>
+		</sequential>
+	</macrodef>
+
+	<target name="jaxb" depends="retrieve">
+		<xjc name="AIM" package="havis.net.aim.xsd">
+			<binding dir="${resources.dir}" includes="binding/AIM.xml" />
+		</xjc>
+		<mkdir dir="${build.dir.jaxb.classes}" />
+		<javac srcdir="${build.dir.jaxb.src}" destdir="${build.dir.jaxb.classes}" debug="${javac.debug}" includeantruntime="false">
+			<classpath>
+				<!-- build libraries -->
+				<path refid="build.classpath" />
+			</classpath>
+		</javac>
+	</target>
+
+	<!-- Compiles the java source files -->
+	<target name="compile" depends="jaxb">
+		<mkdir dir="${build.dir.classes}" />
+		<javac srcdir="${src.main.dir}" destdir="${build.dir.classes}" debug="${javac.debug}" includeantruntime="false">
+			<classpath>
+				<!-- build libraries -->
+				<path refid="build.classpath" />
+				<pathelement location="${build.dir.jaxb.classes}" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="check.compile-gwt">
+		<uptodate property="uptodate.compile-gwt" targetfile="${dst.dir}/www/havis.net.aim.OpcUaSecurity/havis.net.aim.OpcUaSecurity.nocache.js">
+			<srcfiles dir="${src.main.dir}" includes="*" />
+		</uptodate>
+	</target>
+
+	<target name="compile-gwt" depends="check.compile-gwt, compile" unless="uptodate.compile-gwt">
+		<mkdir dir="${dst.dir}/www" />
+		<java failonerror="true" fork="true" classname="com.google.gwt.dev.Compiler">
+			<classpath>
+				<pathelement location="${src.main.dir}" />
+				<pathelement location="${build.dir}/jaxb/src" />
+				<pathelement location="${build.dir}/jaxb/classes" />
+				<pathelement location="${build.dir.classes}" />
+				<path refid="build.classpath" />
+			</classpath>
+			<jvmarg value="-Xmx512M" />
+			<arg line="-style PRETTY" />
+			<arg value="-strict" />
+			<arg value="-war" />
+			<arg value="${dst.dir}/www" />
+			<arg line="${gwt.modules}" />
+		</java>
+
+		<delete dir="${dst.dir}/gwt-unitCache" />
+		<delete dir="${dst.dir}/www/WEB-INF" />
+	</target>
+
+	<!-- Packages the classes into a JAR file -->
+	<target name="jar" depends="compile-gwt" description="Creates the binary JAR">
+		<copy overwrite="true" todir="${build.dir.classes}">
+			<fileset dir="${resources.dir.classpath}" includes="OSGI-INF/${basename}.properties" />
+			<filterset refid="manifest" />
+		</copy>
+		<jar jarfile="${build.dir}/${basename}.jar" manifest="${resources.dir}/MANIFEST.MF">
+			<fileset dir="${build.dir.classes}" />
+			<fileset dir="${build.dir.jaxb.classes}" />
+			<fileset dir="${resources.dir.classpath}" excludes="OSGI-INF/${basename}.properties" />
+		</jar>
+	</target>
+
+	<target name="jar-src" description="Creates the source JAR">
+		<!-- create source JAR -->
+		<jar jarfile="${build.dir}/${basename}-sources.jar">
+			<fileset dir="${src.main.dir}" />
+			<fileset dir="${build.dir.jaxb.src}" />
+		</jar>
+	</target>
+
+	<target name="jar-doc">
+		<javadoc destdir="${doc.dir}" author="true" version="true" use="true" windowtitle="${javadoc.windowtitle}" doctitle="${javadoc.doctitle}" bottom="${javadoc.buttom}">
+			<packageset dir="${src.main.dir}" defaultexcludes="yes" />
+			<packageset dir="${build.dir.jaxb.src}" defaultexcludes="yes" />
+			<classpath refid="build.classpath" />
+			<group title="Packages" packages="havis.net.aim.*" />
+			<link offline="true" href="http://docs.oracle.com/javase/7/docs/api/" packagelistURL="${api.url}/javase/7/" />
+		</javadoc>
+		<jar jarfile="${build.dir}/${basename}-javadoc.jar" basedir="${doc.dir}" />
+	</target>
+
+	<target name="deb" depends="jar">
+		<copy file="${build.dir}/${basename}.jar" tofile="${dst.dir}/bundle/40_${basename}.jar" />
+
+		<copy todir="${build.dir}/deb">
+			<fileset dir="${resources.dir}/deb/" includes="**/*.html DEBIAN/*" />
+			<filterset refid="manifest" />
+			<filterset>
+				<filter token="ARCH" value="${arch}" />
+			</filterset>
+		</copy>
+
+		<copy todir="${build.dir}/deb">
+			<fileset dir="${resources.dir}/deb/" excludes="**/*.html DEBIAN/*" />
+		</copy>
+
+		<chmod perm="755" type="file">
+			<fileset dir="${build.dir}/deb/DEBIAN">
+				<include name="preinst" />
+				<include name="postinst" />
+				<include name="prerm" />
+				<include name="postrm" />
+			</fileset>
+		</chmod>
+
+		<mkdir dir="${build.dir}/tar" />
+
+		<ivy:resolve file="ivy.xml" conf="runtime" />
+		<ivy:retrieve pattern="${build.dir}/tar/[artifact].[ext]" conf="runtime" />
+
+		<exec executable="fakeroot" failonerror="true">
+			<arg value="dpkg" />
+			<arg value="-b" />
+			<arg value="${build.dir}/deb" />
+			<arg value="${build.dir}/tar/${basename}.deb" />
+		</exec>
+	</target>
+
+	<target name="app" depends="deb">
+		<exec executable="fakeroot" failonerror="true">
+			<arg value="tar" />
+			<arg value="cfC" />
+			<arg value="${build.dir}/${basename}.tar" />
+			<arg value="${build.dir}/tar" />
+			<arg value="." />
+		</exec>
+		<concat destfile="${build.dir}/havis.opc-ua.app" binary="yes">
+			<fileset file="${resources.dir}/make" />
+			<fileset file="${build.dir}/${basename}.tar" />
+		</concat>
+	</target>
+
+	<target name="publish" depends="app, jar-src, jar-doc">
+		<ivy:resolve file="${resources.dir}/ivy.xml" />
+
+		<ivy:publish resolver="${ivy.resolver}" pubrevision="${manifest.Bundle-Version}" status="integration" overwrite="true">
+			<artifacts pattern="${build.dir}/[artifact].[ext]" />
+		</ivy:publish>
+	</target>
+
+	<target name="prepare" depends="compile" unless="${skip.test}">
+		<mkdir dir="${build.dir.test.classes}" />
+		<javac srcdir="${src.test.dir}" destdir="${build.dir.test.classes}" debug="${javac.debug}" includeantruntime="false">
+			<classpath>
+				<path refid="build.classpath" />
+				<pathelement location="${build.dir.classes}" />
+				<pathelement location="${build.dir.jaxb.classes}" />
+			</classpath>
+		</javac>
+	</target>
+
+	<target name="test" depends="prepare" unless="${skip.test}">
+		<junit printsummary="true" fork="yes" haltonerror="yes" haltonfailure="yes">
+			<jvmarg value="-Djmockit-coverage-excludes=${jmockit.coverage.exclude}" />
+			<jvmarg value="-Djmockit-coverage-outputDir=${jmockit.coverage.outputDir}" />
+			<jvmarg value="-Djava.library.path=${resources.dir.test}/native" />
+			<classpath>
+				<path refid="build.classpath" />
+				<pathelement location="${build.dir.classes}" />
+				<pathelement location="${build.dir.jaxb.classes}" />
+				<pathelement location="${build.dir.test.classes}" />
+				<pathelement location="${resources.dir.test.classpath}" />
+			</classpath>
+			<formatter type="xml" />
+			<test name="havis.net.aim.TestSuite" todir="${build.dir.test}" />
+		</junit>
+		<zip zipfile="${build.dir}/${basename}-test.zip" basedir="${build.dir.test}" excludes="classes/**" />
+	</target>
+
+	<macrodef name="extract">
+		<attribute name="name" />
+		<sequential>
+			<local name="extract.deb" />
+			<condition property="extract.deb">
+				<matches pattern="\.deb$" string="@{name}" />
+			</condition>
+			<exec executable="bash" dir="${build.dir}" unless:set="extract.deb">
+				<env key="TARGET" value="${build.dir}/deb" />
+				<arg value="@{name}" />
+				<arg value="extract" />
+			</exec>
+			<exec executable="dpkg" if:set="extract.deb">
+				<arg value="-x" />
+				<arg value="${build.dir}/@{name}" />
+				<arg value="${build.dir}/deb" />
+			</exec>
+		</sequential>
+	</macrodef>
+
+	<target name="standalone" depends="deb">
+		<ivy:retrieve pattern="${build.dir}/[artifact].[ext]" conf="standalone" />
+		<exec executable="dpkg">
+			<arg value="-x" />
+			<arg value="${build.dir}/havis-apps.deb" />
+			<arg value="${build.dir}/deb" />
+		</exec>
+		<available file="${user.home}/.felix" property="standalone.felix.present" />
+		<copy file="${user.home}/.felix" tofile="${build.dir}/deb/etc/default/felix" overwrite="true" if:set="standalone.felix.present" />
+		<extract name="havis.opc-ua.deb" />
+		<extract name="havis.opc-ua.deb.models" />
+		<extract name="havis.device.rf-nur.app" />
+		<extract name="havis.device.io-mica.app" />
+	</target>
+
+</project>

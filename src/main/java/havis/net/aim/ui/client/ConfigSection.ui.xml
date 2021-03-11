@@ -1,0 +1,68 @@
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:s="urn:import:havis.net.ui.shared.client"
+	xmlns:o="urn:import:havis.net.aim.ui.client"
+	xmlns:u="urn:import:havis.net.ui.shared.client.upload"
+	xmlns:shr="urn:import:havis.net.ui.shared.client.widgets"
+>
+	
+	<ui:with type="havis.net.ui.shared.resourcebundle.ResourceBundle" field="res" />
+	<ui:with type="havis.net.aim.ui.resourcebundle.ConstantsResource" field="i18n" />
+	<ui:with type="havis.net.aim.ui.resourcebundle.AppResources" field="localRes" />
+	
+	<ui:style>	
+	.section { 
+		border-bottom: 1px solid lightgrey;
+	}
+	
+	.configSeperator {
+		padding: 0.5em 0;
+		border-top: 1px solid lightgrey;
+	}
+	
+	.switcher {
+	 	margin-bottom: 0.3em;
+	}
+	
+
+
+	.fileButton {
+		cursor: pointer;
+		width: 6em;
+		border: 0;
+	    height: 1.8em;
+	    font-size: 1em;
+	    text-indent: 1em;
+	}
+	
+	.buttons {
+		margin: 0.1em 0;
+		display: inline-flex;
+		display: -ms-inline-flex;
+		line-height: 1.8em;
+		border: 1px solid lightgrey;
+		border-radius: 5px;
+		background: linear-gradient(#fff, #f2f2f2);
+		box-shadow: 0 2px 5px #d2d2d2;
+	}
+	.fileButton.first {
+		border-right: 1px solid lightgrey;
+	}
+	
+	.border {
+		border-top: 1px solid lightgrey;
+	}
+	</ui:style>
+	
+	<g:HTMLPanel>
+		<g:FlowPanel ui:field="configRows" addStyleNames="{res.css.configArea} {style.configSeperator}" >
+			<g:HTMLPanel addStyleNames="{localRes.css.configRow}">
+				<g:Label ui:text="{i18n.tagSet}" addStyleNames="{localRes.css.largeLabel}" />
+				<g:ListBox ui:field="tagSet" addStyleNames="{res.css.webuiListBox} {localRes.css.listBox}">
+				</g:ListBox>
+			</g:HTMLPanel>		
+		</g:FlowPanel>
+		<shr:CustomMessageWidget ui:field="message" />
+	</g:HTMLPanel>
+</ui:UiBinder> 

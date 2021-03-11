@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<bindings version="2.1" 
+	xmlns="http://java.sun.com/xml/ns/jaxb" 
+	xmlns:xs="http://www.w3.org/2001/XMLSchema" 
+	xmlns:clone="urn:havis:tools:jaxb:clone" 
+	extensionBindingPrefixes="clone">
+	<bindings schemaLocation="../xsd/AIM.xsd">
+		<bindings node="/xs:schema/xs:complexType[@name='Configuration']">
+			<clone:clone />			
+		</bindings>					
+	</bindings>
+</bindings>

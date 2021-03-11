@@ -1,0 +1,9 @@
+UaModeler
+---------
+
+- Create a project directory
+- Copy the model XML files to the project directory
+- Create a new project in UaModeler: modeling only, any namespace URI eg. "http://yourorganisation.org/aim_dev/"
+- Add existing model XML files
+- Add new nodes to a model by choosing the relating namespace URI for the nodes
+- Export modified models with menu entry "Export XML" (model "aim_dev" is empty!)

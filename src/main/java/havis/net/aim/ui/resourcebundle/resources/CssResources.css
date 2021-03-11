@@ -1,0 +1,48 @@
+@CHARSET "ISO-8859-1";
+
+@url SPEC_ITEM_EXPORT specItemExport;
+@url SPEC_ITEM_IMPORT specItemImport;
+
+.configRow {
+	display: -webkit-box;
+	display: -webkit-flex;
+	display: flex;
+	align-items: center;
+	margin-left: 2.3em;
+}
+
+.largeLabel{
+	font-weight: bold;
+	width: 13em;
+	line-height: 2em;
+}
+
+.smallButton {
+	cursor: pointer;
+	transition: width 0.5s;
+	border: none;
+	width: 3em;
+	height: 3em;
+	display: flex;
+	display: -ms-flexbox;
+	margin: 3px;
+}
+
+.smallButton:disabled {
+	opacity: 0.6;
+}
+
+.configRow .exportButton {
+  	background: SPEC_ITEM_EXPORT no-repeat 0.3em center;
+}
+
+.configRow .importButton {
+  	background: SPEC_ITEM_IMPORT no-repeat 0.3em center;
+}
+
+.listBox {
+	width: 240px;
+	flex-basis: auto;
+	flex-grow: 0;
+	flex-shrink: 1;
+}

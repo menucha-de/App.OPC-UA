@@ -1,0 +1,38 @@
+Bundle-Name: Ha-VIS Net AIM
+Bundle-SymbolicName: havis.net.aim
+Application-Name: OPC-UA for RFID
+Bundle-Version: 2.7.0
+Implementation-Version: 2.7
+Bundle-ManifestVersion: 2
+Bundle-Vendor: HARTING IT_SD
+Bundle-Activator: havis.net.aim.osgi.Activator
+Havis-Bundle: /OSGI-INF/havis.net.aim.properties
+Import-Package: 
+ com.fasterxml.jackson.core,
+ com.fasterxml.jackson.databind,
+ havis.device.io,
+ havis.device.rf,
+ havis.device.rf.capabilities,
+ havis.device.rf.common.util,
+ havis.device.rf.configuration,
+ havis.device.rf.exception,
+ havis.device.rf.tag,
+ havis.device.rf.tag.operation,
+ havis.device.rf.tag.result,
+ havis.net.rest.shared,
+ havis.opcua.message,
+ havis.opcua.message.common,
+ havis.opcua.message.exception,
+ javax.ws.rs,
+ javax.ws.rs.core,
+ javax.ws.rs.ext,
+ javax.xml.bind,
+ javax.xml.parsers,
+ javax.xml.transform,
+ javax.xml.transform.dom,
+ javax.xml.transform.stream,
+ javax.xml.xpath,
+ org.osgi.framework;resolution:=optional,
+ org.osgi.util.tracker;resolution:=optional,
+ org.w3c.dom,
+ org.xml.sax
