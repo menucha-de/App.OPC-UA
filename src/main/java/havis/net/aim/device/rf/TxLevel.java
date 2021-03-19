@@ -4,9 +4,6 @@ package havis.net.aim.device.rf;
 /**
  * This enum maps TX levels in dBm and mW to Nur API constants and the
  * corresponding numeric values.
- * 
- * @author Christian Brink, HARTING IT Software Development GmbH & Co. KG
- * 
  */
 
 public enum TxLevel {
